@@ -1,31 +1,78 @@
-﻿@{
+﻿@model IEnumerable<ShoppingWithCart.tblProductDtl>
+
+@{
+
     ViewBag.Title = "Home Page";
 }
+<style>
+    .demo-card-square.mdl-card {
+        width: 320px;
+        height: 300px;
+        padding: 0px;
+        
+    }
+    .demo-card-square {
+        margin:10px;
+    }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+    .demo-card-square > .mdl-card__title {
+        color: #fff;
+        background-color: lightgreen;
+    }
+
+    .mdl-card__media {
+        background-color: white;
+        margin:12px;
+    }
+    #description{
+        color: rgba(0,0,0,.54);
+        font-size: 1rem;
+        line-height: 18px;
+        overflow: hidden;
+        padding: 16px;
+        width: 90%;
+    }
+
+    .mdl-card__supporting-text {
+        color: rgba(0,0,0,.54);
+         font-size: 2rem;
+        /*line-height: 0px;*/
+        overflow: hidden;
+        padding: 16px;
+        width: 90%;
+    }
+
+    .mdl-button--raised.mdl-button--colored {
+        background: #1c6b68;
+        color: #fff;
+    }
+</style>
+
+<h3> Products</h3>
+<section class="content">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="demo-card-square mdl-card mdl-shadow--2dp col-lg-3 col-xs-6">
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text mdl-card-square">@item.productName</h2>
+                </div>
+
+                <div class="mdl-card__media">
+                    <img src="@item.imagePath" width="58" height="120" border="0" alt="" style="padding:0px;">
+                    <span id="description">@item.description</span>
+                </div>
+
+                <div class="mdl-card__supporting-text">
+                    <b>₹ @item.price</b> 
+                </div>
+
+                <div class="mdl-card__actions mdl-card--border">
+                    <a href="#" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--raised" onclick="AddToCart(@item.productId)">ADD TO CART</a>
+                </div>
+            </div>
+        }
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>
+</section>
+
