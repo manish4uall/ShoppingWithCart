@@ -251,7 +251,7 @@
     <Content Include="mdl\bootstrap.min.css" />
     <Content Include="mdl\bootstrap.min.js" />
     <Content Include="mdl\demo.js" />
-    <Content Include="mdl\MyJavaScript.js" />
+    <Content Include="dist\js\MyJavaScript.js" />
     <Content Include="mdl\_all-skins.css" />
     <Content Include="mdl\_all-skins.min.css" />
     <Content Include="Model1.Context.tt">

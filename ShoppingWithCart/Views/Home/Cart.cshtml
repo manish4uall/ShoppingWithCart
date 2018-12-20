@@ -7,7 +7,7 @@
 <section class="content">
     @if (Model.Count() == 0)
     {
-        <h3>Nothing Interesting Here</h3>
+        <h3>Your Cart is Empty</h3>
     }
 
     @foreach(var item in Model)
@@ -18,7 +18,7 @@
                     <div class="box-header with-border">
                         <h3 class="box-title">@item.productName</h3>
                         <div class="box-tools pull-right">
-                            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                            <button class="btn btn-box-tool" data-widget="remove" onclick="RemoveFromCart(@item.productId)"><i class="fa fa-times"></i></button>
                         </div><!-- /.box-tools -->
                     </div><!-- /.box-header -->
                     <div class="box-body">

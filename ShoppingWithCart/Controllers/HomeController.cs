@@ -113,5 +113,14 @@ namespace ShoppingWithCart.Controllers
             
         }
 
+        [HttpPost]
+        public JsonResult RemoveFromCart(int id)
+        {
+            List<int> ProductIds = (List<int>)Session["Cart"];
+            List<int> result = ProductIds.Where(x => x != id).ToList();
+            Session["Cart"] = null;
+            Session["Cart"] = result;
+            return Json(new { cartItemsCount = result.Count() });
+        }
     }
 }
