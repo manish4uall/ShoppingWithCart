@@ -22,6 +22,7 @@ function GetCartItems() {
 
 
 function AddToCart(id) {
+    AddedToCartNotification();
     console.log("AddToCart ProductId =", id);
     var obj = { id: id };
     $.ajax({
@@ -59,5 +60,10 @@ function NotifyProductAlreadyExists() {
             message: 'Product is Already in the Cart'
         }
     );
+}
+
+
+function AddedToCartNotification() {
+    console.log("Inside Notification");
 }
  

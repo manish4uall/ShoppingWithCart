@@ -1,32 +1,35 @@
-﻿
+﻿@model IEnumerable<ShoppingWithCart.ViewModel.ProductDetailsVM>
 @{
     ViewBag.Title = "Cart";
 }
 
 <h2>Your Cart</h2>
 <section class="content">
-
-    @for (int i = 0; i < 5; i++)
+    @if (Model.Count() == 0)
     {
-    <div class="row">
-        <div class="col-md-9 col-lg-12">
-            <div class="box box-success">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Removable</h3>
-                    <div class="box-tools pull-right">
-                        <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                    </div><!-- /.box-tools -->
-                </div><!-- /.box-header -->
-                <div class="box-body">
-                    The body of the box
-                </div><!-- /.box-body -->
-            </div><!-- /.box -->
+        <h3>Nothing Interesting Here</h3>
+    }
+
+    @foreach(var item in Model)
+    {
+        <div class="row">
+            <div class="col-md-9 col-lg-12">
+                <div class="box box-success">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">@item.productName</h3>
+                        <div class="box-tools pull-right">
+                            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                        </div><!-- /.box-tools -->
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+                        @item.description
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            </div>
         </div>
+    }
 
-    </div>
-     }
 
-        
 </section>
 
-        <a href="/Home/PlaceOrder" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">Place Order </a>
+<a href="/Home/PlaceOrder" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">Place Order </a>
