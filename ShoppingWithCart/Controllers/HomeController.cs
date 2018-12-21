@@ -9,6 +9,7 @@ namespace ShoppingWithCart.Controllers
 {
     public class HomeController : Controller
     {
+        [HttpGet]
         public ActionResult Index()
         {
             using(Entities dbObj = new Entities())
@@ -18,13 +19,15 @@ namespace ShoppingWithCart.Controllers
             }
             
         }
+
+        [HttpGet]
         public ActionResult Cart()
         {
             if (Session["Cart"] != null)
             {
                 using (Entities dbObj = new Entities())
                 {
-                    var ProductIds = (List<int>)Session["Cart"];
+                    var ProductIds = (List<Cart>)Session["Cart"];
 
                     var queryResult = from prod in dbObj.tblProducts
                                       join prodDtl in dbObj.tblProductDtls on prod.productId equals prodDtl.productId
@@ -36,7 +39,7 @@ namespace ShoppingWithCart.Controllers
                     List<ProductDetailsVM> listproductDetailsVM = new List<ProductDetailsVM>();
                     foreach (var item in ProductIds)
                     {
-                        var row = results.Where(c => c.productId == item);
+                        var row = results.Where(c => c.productId == item.Productid);
                         foreach (var values in row)
                         {
                             ProductDetailsVM productDetails = new ProductDetailsVM()
@@ -47,7 +50,8 @@ namespace ShoppingWithCart.Controllers
                                 productName = values.productName,
                                 description = values.description,
                                 imagePath = values.imagePath,
-                                price = values.price
+                                price = values.price,
+                                Quantity = item.Quantity
                             };
 
                             listproductDetailsVM.Add(productDetails);
@@ -74,22 +78,43 @@ namespace ShoppingWithCart.Controllers
         [HttpPost]
         public JsonResult AddToCart(int id)
         {
-            List<int> ProductIds = new List<int>();
+            List<Cart> ProductIds = new List<Cart>();
             bool productAlreadyExists = false;
 
             if ( Session["Cart"] == null)
             {
-                ProductIds.Add(id);
+                Cart items = new Cart()
+                {
+                    Productid = id,
+                    Quantity = 1
+                    
+                };
+                ProductIds.Add(items);
                 Session["Cart"] = ProductIds;
             }
             else
             {
-                ProductIds = (List<int>)Session["Cart"];
-                if(ProductIds.Any(x => x == id)){
+                ProductIds = (List<Cart>)Session["Cart"];
+                if(ProductIds.Any(x => x.Productid == id)){
                     productAlreadyExists = true;
+                    foreach(var product in ProductIds)
+                    {
+                        if(product.Productid == id)
+                        {
+                            product.Quantity++;
+                        }
+                    }
+                    
                 }
                 else{
-                    ProductIds.Add(id);
+                    Cart items = new Cart()
+                    {
+                        Productid = id,
+                        Quantity = 1
+
+                    };
+                    ProductIds.Add(items);
+                    
                     Session["Cart"] = ProductIds;
                 }
                 
@@ -100,10 +125,10 @@ namespace ShoppingWithCart.Controllers
         [HttpPost]
         public JsonResult GetCartItems()
         {
-            List<int> ids = new List<int>();
+            List<Cart> ids = new List<Cart>();
             if (Session["Cart"] != null)
             {
-                ids = (List<int>)Session["Cart"];
+                ids = (List<Cart>)Session["Cart"];
                 return Json(new { cartItemsCount = ids.Count, cartItems = ids });
             }
             else
@@ -116,8 +141,8 @@ namespace ShoppingWithCart.Controllers
         [HttpPost]
         public JsonResult RemoveFromCart(int id)
         {
-            List<int> ProductIds = (List<int>)Session["Cart"];
-            List<int> result = ProductIds.Where(x => x != id).ToList();
+            List<Cart> ProductIds = (List<Cart>)Session["Cart"];
+            List<Cart> result = ProductIds.Where(x => x.Productid != id).ToList();
             Session["Cart"] = null;
             Session["Cart"] = result;
             return Json(new { cartItemsCount = result.Count() });

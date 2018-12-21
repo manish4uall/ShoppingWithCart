@@ -14,5 +14,6 @@ namespace ShoppingWithCart.ViewModel
         public string description { get; set; }
         public string imagePath { get; set; }
         public int price { get; set; }
+        public int Quantity { get; set; }
     }
 }

@@ -3,5 +3,43 @@
     ViewBag.Title = "PlaceOrder";
 }
 
-<h2>Shipping Information</h2>
+<h2>Enter Shipping Information</h2>
+
+<div>
+    <form id="mainForm" action="#">
+
+        <div class="row">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input type="text" id="txtCustomerName" class="mdl-textfield__input" />
+                <label class="mdl-textfield__label" for="txtCustomerName">Name..</label>
+            </div>
+        </div>
+
+
+        @*<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input type="text" id="txtOrderNo" class="mdl-textfield__input" pattern="-?[0-9]*(\.[0-9]+)?" />
+            <label class="mdl-textfield__label" for="txtOrderNo">Order No.</label>
+            <span class="mdl-textfield__error">Input is not a number!</span>
+        </div>*@
+
+        <div class="row">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input type="text" id="txtAddress" class="mdl-textfield__input" />
+                <label class="mdl-textfield__label" for="txtAddress">Address..</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input type="number" id="txtNumber" class="mdl-textfield__input" />
+                <label class="mdl-textfield__label" for="txtNumber">Phone No..</label>
+            </div>
+        </div>
+
+    </form>
+    <div class="row">
+        <button onclick="PlaceOrder()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">CHECKOUT </button>
+    </div>
+</div>
+
 

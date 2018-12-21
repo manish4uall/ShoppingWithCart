@@ -1,8 +1,11 @@
-﻿GetCartItems();
+﻿GetCartItems().done(function (data) {
+    SetCartItemCount(data.cartItemsCount);
+});
 
 
 function GetCartItems() {
-    $.ajax({
+    
+    return $.ajax({
         url: "/Home/GetCartItems",
         data: JSON.stringify("1"),
         type: "POST",
@@ -11,16 +14,20 @@ function GetCartItems() {
 
         success: function (data) {
             console.log("GetCartItems success =", data);
-            SetCartItemCount(data.cartItemsCount);
         },
         error: function (data) {
             console.log("GetCartItems error =", data);
         }
+
     });
 }
 
+function AjaxCallPost() {
+
+}
+
 function AddToCart(id) {
-    AddedToCartNotification();
+    AddingToCartNotification();
     console.log("AddToCart ProductId =", id);
     var obj = { id: id };
     $.ajax({
@@ -65,11 +72,17 @@ function RemoveFromCart(id) {
         success: function (data) {
             console.log("RemoveFromCart success =", data);
             SetCartItemCount(data.cartItemsCount);
+            NotifyProductRemoved();
         },
         error: function (data) {
             console.log("AddToCart error =", data);
         }
     });
+}
+
+function PlaceOrder() {
+    //console.log("PlaceOrder", cartItems);
+
 }
 
 function NotifyProductAlreadyExists() {
@@ -81,7 +94,7 @@ function NotifyProductAlreadyExists() {
     );
 }
 
-function AddedToCartNotification() {
+function AddingToCartNotification() {
     console.log("AddedToCartNotification");
     var notification = document.querySelector('.mdl-js-snackbar');
     notification.MaterialSnackbar.showSnackbar(
@@ -107,4 +120,12 @@ function NotifyProductAdded() {
     };
     notification.MaterialSnackbar.showSnackbar(data);
 }
- 
+
+function NotifyProductRemoved() {
+    var notification = document.querySelector('.mdl-js-snackbar');
+    notification.MaterialSnackbar.showSnackbar(
+        {
+            message: 'PRODUCT REMOVED..'
+        }
+    );
+}
