@@ -170,6 +170,7 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\Cart.cs" />
+    <Compile Include="ViewModel\Checkout.cs" />
     <Compile Include="ViewModel\ProductDetailsVM.cs" />
   </ItemGroup>
   <ItemGroup>

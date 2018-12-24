@@ -5,8 +5,12 @@
     ViewBag.Title = "Home Page";
 }
 <style>
+    .row {
+         margin-right: 0px; 
+         margin-left: 0px; 
+    }
     .demo-card-square.mdl-card {
-        width: 320px;
+        width: 300px;
         height: 300px;
         padding: 0px;
         
@@ -20,10 +24,14 @@
         color: #fff;
         background-color: lightgreen;
     }
+    .mdl-card__title-text {
+        overflow: hidden;
+        font-size:medium;
+    }
 
     .mdl-card__media {
         background-color: white;
-        margin:12px;
+        margin: 12px;
     }
     #description{
         color: rgba(0,0,0,.54);
@@ -50,11 +58,10 @@
 </style>
 
 <h3> Products</h3>
-<section class="content">
     <div class="row">
         @foreach (var item in Model)
         {
-            <div class="demo-card-square mdl-card mdl-shadow--2dp col-lg-3 col-xs-6">
+            <div class="demo-card-square mdl-card mdl-shadow--2dp col-lg-3 col-xs-12 col-md-4">
                 <div class="mdl-card__title">
                     <h2 class="mdl-card__title-text mdl-card-square">@item.productName</h2>
                 </div>
@@ -74,5 +81,4 @@
             </div>
         }
     </div>
-</section>
 

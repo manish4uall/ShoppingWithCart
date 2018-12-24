@@ -25,42 +25,7 @@ namespace ShoppingWithCart.Controllers
         {
             if (Session["Cart"] != null)
             {
-                using (Entities dbObj = new Entities())
-                {
-                    var ProductIds = (List<Cart>)Session["Cart"];
-
-                    var queryResult = from prod in dbObj.tblProducts
-                                      join prodDtl in dbObj.tblProductDtls on prod.productId equals prodDtl.productId
-                                      join ctg in dbObj.tblCategories on prod.categoryId equals ctg.categoryId
-                                      where (prod.productId == prodDtl.productId) && (prod.categoryId == ctg.categoryId)
-                                      select new { prod.productId, prod.categoryId, ctg.categoryName, prodDtl.productName, prodDtl.description, prodDtl.imagePath, prodDtl.price };
-                    var results = queryResult.ToList();
-
-                    List<ProductDetailsVM> listproductDetailsVM = new List<ProductDetailsVM>();
-                    foreach (var item in ProductIds)
-                    {
-                        var row = results.Where(c => c.productId == item.Productid);
-                        foreach (var values in row)
-                        {
-                            ProductDetailsVM productDetails = new ProductDetailsVM()
-                            {
-                                productId = values.productId,
-                                categoryId = values.categoryId,
-                                categoryName = values.categoryName,
-                                productName = values.productName,
-                                description = values.description,
-                                imagePath = values.imagePath,
-                                price = values.price,
-                                Quantity = item.Quantity
-                            };
-
-                            listproductDetailsVM.Add(productDetails);
-
-                        }
-                    }
-
-                    return View(listproductDetailsVM);
-                }
+                return View(GetProductDetailsbyProductids());
 
             }
             else
@@ -70,7 +35,15 @@ namespace ShoppingWithCart.Controllers
             
         }
 
+        [HttpGet]
         public ActionResult PlaceOrder()
+        {
+            
+            return View(GetProductDetailsbyProductids());
+        }
+
+        [HttpPost]
+        public ActionResult PlaceOrder(Checkout checkout)
         {
             return View();
         }
@@ -146,6 +119,54 @@ namespace ShoppingWithCart.Controllers
             Session["Cart"] = null;
             Session["Cart"] = result;
             return Json(new { cartItemsCount = result.Count() });
+        }
+
+        public  List<ProductDetailsVM> GetProductDetailsbyProductids()
+        {
+            if (Session["Cart"] != null)
+            {
+                using (Entities dbObj = new Entities())
+                {
+                    var ProductIds = (List<Cart>)Session["Cart"];
+
+                    var queryResult = from prod in dbObj.tblProducts
+                                      join prodDtl in dbObj.tblProductDtls on prod.productId equals prodDtl.productId
+                                      join ctg in dbObj.tblCategories on prod.categoryId equals ctg.categoryId
+                                      where (prod.productId == prodDtl.productId) && (prod.categoryId == ctg.categoryId)
+                                      select new { prod.productId, prod.categoryId, ctg.categoryName, prodDtl.productName, prodDtl.description, prodDtl.imagePath, prodDtl.price };
+                    var results = queryResult.ToList();
+
+                    List<ProductDetailsVM> listproductDetailsVM = new List<ProductDetailsVM>();
+                    foreach (var item in ProductIds)
+                    {
+                        var row = results.Where(c => c.productId == item.Productid);
+                        foreach (var values in row)
+                        {
+                            ProductDetailsVM productDetails = new ProductDetailsVM()
+                            {
+                                productId = values.productId,
+                                categoryId = values.categoryId,
+                                categoryName = values.categoryName,
+                                productName = values.productName,
+                                description = values.description,
+                                imagePath = values.imagePath,
+                                price = values.price,
+                                Quantity = item.Quantity
+                            };
+
+                            listproductDetailsVM.Add(productDetails);
+
+                        }
+                    }
+
+                    return listproductDetailsVM;
+                }
+            
+            }
+            else
+            {
+                return (new List<ProductDetailsVM>());
+            }
         }
     }
 }

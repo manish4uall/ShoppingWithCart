@@ -57,10 +57,11 @@ function AddToCart(id) {
 function SetCartItemCount(count) {
     console.log("SetCartItemCount count =", count);
     $("#cartItemCount").html('');
-    $("#cartItemCount").append(count);
+    $("#cartItemCount").html(count);
 }
 
 function RemoveFromCart(id) {
+    RemoveSlideUpAnimation(id);
     console.log("RemoveFromCart id =", id);
     var obj = { id: id };
     $.ajax({
@@ -81,8 +82,7 @@ function RemoveFromCart(id) {
 }
 
 function PlaceOrder() {
-    //console.log("PlaceOrder", cartItems);
-
+    console.log("PlaceOrder");
 }
 
 function NotifyProductAlreadyExists() {
@@ -128,4 +128,10 @@ function NotifyProductRemoved() {
             message: 'PRODUCT REMOVED..'
         }
     );
+}
+
+function RemoveSlideUpAnimation(id) {
+    console.log("RemoveSlideUpAnimation id =", id);
+    var string = "#cartitembox_" + id;
+    $(string).slideUp(1000);
 }
