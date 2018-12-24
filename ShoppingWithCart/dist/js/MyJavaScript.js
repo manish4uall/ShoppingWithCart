@@ -81,15 +81,11 @@ function RemoveFromCart(id) {
     });
 }
 
-function PlaceOrder() {
-    console.log("PlaceOrder");
-}
-
 function NotifyProductAlreadyExists() {
     var notification = document.querySelector('.mdl-js-snackbar');
     notification.MaterialSnackbar.showSnackbar(
         {
-            message: 'PRODUCT IS ALREADY IN THE CART'
+            message: 'PRODUCT IS ALREADY IN THE CART, QUANTITY INCREASED'
         }
     );
 }
@@ -134,4 +130,20 @@ function RemoveSlideUpAnimation(id) {
     console.log("RemoveSlideUpAnimation id =", id);
     var string = "#cartitembox_" + id;
     $(string).slideUp(1000);
+}
+
+function DeleteCart() {
+    $.ajax({
+        url: "/Home/DeleteCart",
+        data: JSON.stringify("1"),
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (data) {
+            console.log("DeleteCart success =", data);
+        },
+        error: function (data) {
+            console.log("DeleteCart error =", data);
+        }
+    });
 }

@@ -38,8 +38,46 @@
 
     </form>
     <div class="row">
-        <button type ="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">CHECKOUT </button>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" onclick="PlaceOrder()">CHECKOUT </button>
     </div>
 </div>
+
+<script>
+    
+
+    function PlaceOrder() {
+        var Name = $("#txtCustomerName").val();
+        var Address = $("#txtAddress").val();
+        var Phone = $("#txtNumber").val();
+        console.log("Form Values", Name, Address, Phone)
+        var obj =
+        {
+            Name: Name,
+            Address: Address,
+            Phone: Phone
+        };
+        console.log("PlaceOrder");
+        $.ajax({
+            url: "/Home/PlaceOrder",
+            data: JSON.stringify(obj),
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            success: function (data) {
+                console.log("PlaceOrder success =", data);
+                DeleteCart();
+                alert("Order Placed Successfully");
+                window.location.href = "/Home/Index";
+            },
+            error: function (data) {
+                console.log("PlaceOrder error =", data);
+            }
+        });
+
+
+    }
+
+    
+</script>
 
 

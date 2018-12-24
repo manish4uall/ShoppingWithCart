@@ -45,7 +45,41 @@ namespace ShoppingWithCart.Controllers
         [HttpPost]
         public ActionResult PlaceOrder(Checkout checkout)
         {
-            return View();
+            using (Entities dbObj = new Entities())
+            {
+                var pDetails = GetProductDetailsbyProductids();
+                int total = 0;
+                foreach(var item in pDetails)
+                {
+                    total+= item.price * item.Quantity;
+                }
+
+                List<Cart> ProductIds = (List<Cart>)Session["Cart"];
+                tblOrder order = new tblOrder()
+                {
+                    customerName = checkout.Name,
+                    address = checkout.Address,
+                    orderAmount = total
+                };
+                dbObj.tblOrders.Add(order);
+                dbObj.SaveChanges();
+
+                var orderId = dbObj.tblOrders.OrderByDescending(m => m.orderId).First().orderId;
+
+                foreach (var item in pDetails)
+                {
+                    tblOrderProduct tblOrderProduct = new tblOrderProduct()
+                    {
+                        orderId = orderId,
+                        productId = item.productId
+                    };
+                    dbObj.tblOrderProducts.Add(tblOrderProduct);
+                    dbObj.SaveChanges();
+                }
+                return Json(new { msg = "success" });
+
+            }
+                
         }
 
         [HttpPost]
@@ -167,6 +201,13 @@ namespace ShoppingWithCart.Controllers
             {
                 return (new List<ProductDetailsVM>());
             }
+        }
+
+        [HttpPost]
+        public JsonResult DeleteCart(Nullable<int> i)
+        {
+            Session["Cart"] = null;
+            return Json(new { msg = "Delete Cart Success" });
         }
     }
 }
