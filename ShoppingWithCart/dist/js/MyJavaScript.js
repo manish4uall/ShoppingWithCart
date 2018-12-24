@@ -1,6 +1,8 @@
 ﻿GetCartItems().done(function (data) {
     SetCartItemCount(data.cartItemsCount);
+    
 });
+UpdateTotalAmount();
 
 
 function GetCartItems() {
@@ -79,7 +81,10 @@ function RemoveFromCart(id) {
             console.log("AddToCart error =", data);
         }
     });
+    console.log("After Ajax");
+    UpdateTotalAmount();
 }
+
 
 function NotifyProductAlreadyExists() {
     var notification = document.querySelector('.mdl-js-snackbar');
@@ -128,8 +133,10 @@ function NotifyProductRemoved() {
 
 function RemoveSlideUpAnimation(id) {
     console.log("RemoveSlideUpAnimation id =", id);
-    var string = "#cartitembox_" + id;
-    $(string).slideUp(1000);
+    //var string = "#cartitembox_" + id;
+    $("#cartitembox_" + id).slideUp(1000);
+    $("#cartAmountitembox_" + id).slideUp(1000);
+    
 }
 
 function DeleteCart() {
@@ -146,4 +153,18 @@ function DeleteCart() {
             console.log("DeleteCart error =", data);
         }
     });
+}
+
+function UpdateTotalAmount() {
+    $.ajax({
+        url: "/Home/UpdateTotalAmount",
+        success: function (data) {
+            console.log("UpdateTotalAmount data =", data);
+            $("#totalAmount").html(data.amount);
+        },
+        error: function (data) {
+
+        }
+    })
+    
 }

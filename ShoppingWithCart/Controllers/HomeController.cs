@@ -209,5 +209,17 @@ namespace ShoppingWithCart.Controllers
             Session["Cart"] = null;
             return Json(new { msg = "Delete Cart Success" });
         }
+
+        [HttpGet]
+        public JsonResult UpdateTotalAmount()
+        {
+            var data = GetProductDetailsbyProductids();
+            int amount = 0; 
+            foreach (var item in data)
+            {                
+                amount += item.price * item.Quantity;
+            }
+            return Json(new { amount },JsonRequestBehavior.AllowGet);
+        }
     }
 }

@@ -63,7 +63,7 @@
                 @{ var total = 0;}
                 @foreach (var item in Model)
                 {
-                    <div class="box-body" style="display: block;">
+                    <div class="box-body" style="display: block;" id="cartAmountitembox_@item.productId">
 
                         @item.productName  x @item.Quantity = @Convert.ToDecimal((item.Quantity * item.price)).ToString("#,##0")
                         @{total += (item.Quantity * item.price);}
@@ -71,7 +71,7 @@
                             }
                     <div class="box-body" style="display: block;">
 
-                        Total Amount = @Convert.ToDecimal(total.ToString("#,##0"))
+                        Total Amount = <span id="totalAmount"></span>
                     </div><!-- /.box-body -->
                 
 
