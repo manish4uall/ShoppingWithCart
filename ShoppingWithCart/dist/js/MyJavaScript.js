@@ -211,55 +211,83 @@ function UpdateTotalCart(id) {
     
 }
 
-function IncreaseProductAmount(id) {
+//function IncreaseProductAmount(id) {
     
-    console.log("IncreaseProductAmount ProductId =", id);
-    var obj = { id: id };
+//    console.log("IncreaseProductAmount ProductId =", id);
+//    var obj = { id: id };
+//    $.ajax({
+//        url: "/Home/AddToCart",
+//        data: JSON.stringify(obj),
+//        type: "POST",
+//        dataType: "json",
+//        contentType: "application/json",
+//        success: function (data) {
+//            console.log("IncreaseProductAmount success =", data);
+//            UpdateTotalCart(id);
+//            //NotifyByParameter("Quantity =" + data.currentItemCount);
+//            console.log("IncreaseProductAmount currentItemCount =", data.currentItemCount);
+//        },
+//        error: function (data) {
+//            console.log("IncreaseProductAmount error =", data);
+//        }
+//    });
+//}
+
+//function DecreaseProductAmount(id) {
+
+//    console.log("DecreaseProductAmount ProductId =", id);
+//    var obj = { id: id };
+//    $.ajax({
+//        url: "/Home/DecreaseProductAmount",
+//        data: JSON.stringify(obj),
+//        type: "POST",
+//        dataType: "json",
+//        contentType: "application/json",
+//        success: function (data) {
+//            console.log("DecreaseProductAmount success =", data);
+//            UpdateTotalCart(id);
+//            //NotifyByParameter("Quantity =" + data.currentItemCount);
+//            console.log("DecreaseProductAmount currentItemCount =", data.currentItemCount);
+//            console.log("DecreaseProductAmount cartItemsCount =", data.cartItemsCount);
+//            SetCartItemCount(data.cartItemsCount);
+//            if (data.currentItemCount==0) {
+//                RemoveFadeOutAnimation(id);
+//            }
+//            if (data.cartItemsCount == 0) {
+//                $("#cartPage").html('');
+//                $("#cartPage").html('<h3> Your Cart is Empty</h3>');
+//            }
+//        },
+//        error: function (data) {
+//            console.log("DecreaseProductAmount error =", data);
+//        }
+//    });
+//}
+
+
+function SetProductAmount(id,value) {
+
+    console.log("SetProductAmount ProductId =", id);
+    var obj = {
+        id: id,
+        value: value
+        };
     $.ajax({
-        url: "/Home/AddToCart",
+        url: "/Home/SetProductAmount",
         data: JSON.stringify(obj),
         type: "POST",
         dataType: "json",
         contentType: "application/json",
         success: function (data) {
-            console.log("IncreaseProductAmount success =", data);
+            console.log("SetProductAmount success =", data);
             UpdateTotalCart(id);
             //NotifyByParameter("Quantity =" + data.currentItemCount);
-            console.log("IncreaseProductAmount currentItemCount =", data.currentItemCount);
+            console.log("SetProductAmount currentItemCount =", data.currentItemCount);
+            console.log("SetProductAmount cartItemsCount =", data.cartItemsCount);
+            
         },
         error: function (data) {
-            console.log("IncreaseProductAmount error =", data);
-        }
-    });
-}
-
-function DecreaseProductAmount(id) {
-
-    console.log("DecreaseProductAmount ProductId =", id);
-    var obj = { id: id };
-    $.ajax({
-        url: "/Home/DecreaseProductAmount",
-        data: JSON.stringify(obj),
-        type: "POST",
-        dataType: "json",
-        contentType: "application/json",
-        success: function (data) {
-            console.log("DecreaseProductAmount success =", data);
-            UpdateTotalCart(id);
-            //NotifyByParameter("Quantity =" + data.currentItemCount);
-            console.log("DecreaseProductAmount currentItemCount =", data.currentItemCount);
-            console.log("DecreaseProductAmount cartItemsCount =", data.cartItemsCount);
-            SetCartItemCount(data.cartItemsCount);
-            if (data.currentItemCount==0) {
-                RemoveFadeOutAnimation(id);
-            }
-            if (data.cartItemsCount == 0) {
-                $("#cartPage").html('');
-                $("#cartPage").html('<h3> Your Cart is Empty</h3>');
-            }
-        },
-        error: function (data) {
-            console.log("DecreaseProductAmount error =", data);
+            console.log("SetProductAmount error =", data);
         }
     });
 }
