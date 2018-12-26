@@ -15,6 +15,11 @@
     #prodInfo > h5 {
         margin: auto;
     }
+
+    .center {
+        width: 130px;
+        margin: 0px;
+    }
 </style>
 
 
@@ -24,65 +29,86 @@
     
 @if (Model.Count() != 0)
 {
-<div class="row">
-        <div class="col-md-9 col-lg-9">
-            <div class="box box-success">
-            <div class="box-header with-border">
-                <h2 class="box-title"> Your Cart</h2>
-            </div>
-            @foreach (var item in Model)
-            {
-            <div id="cartitembox_@item.productId" class="box-body cartitembox">
-                <div class="row">
-                    <div class="col-md-2 col-sm-3 col-xs-3">
-                        <img src="@item.imagePath" width="58" height="120" border="0" alt="Product Image" style="padding:0px;" />
+    <div class="row" id="cartPage">
+            <div class="col-md-9 col-lg-9">
+                <div class="box box-success">
+                    <div class="box-header with-border">
+                        <h2 class="box-title"> Your Cart</h2>
                     </div>
-                    <div class="col-md-7 col-sm-4 col-xs-4" id="prodInfo">
-                        <h5>@item.productName</h5>
-                        <h6>Quantity : @item.Quantity</h6>
-                        <h6>Price: @item.price</h6>
-                        <h6>Category :@item.categoryName</h6>
-                    </div>
-                    <div class="col-md-3 col-sm-2 col-xs-2">
-                        <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onclick="RemoveFromCart(@item.productId)">Remove Item </a>
-                    </div>
-                </div>
-            </div>
-            }
-          </div>
-        </div>
-        <div class="col-md-3 col-lg-3">          
-            <div class="box box-warning">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Amount</h3>
-                    <div class="box-tools pull-right">
-                        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-
-                    </div><!-- /.box-tools -->
-                </div><!-- /.box-header -->
-                @{ var total = 0;}
                 @foreach (var item in Model)
                 {
-                    <div class="box-body" style="display: block;" id="cartAmountitembox_@item.productId">
+                    <div id="cartitembox_@item.productId" class="box-body cartitembox">
+                        <div class="row">
+                            <div class="col-md-2 col-sm-3 col-xs-3">
+                                <img src="@item.imagePath" width="58" height="120" border="0" alt="Product Image" style="padding:0px;" />
+                            </div>
+                            <div class="col-md-7 col-sm-4 col-xs-4" id="prodInfo">
+                                <h5>@item.productName</h5>
 
-                        @item.productName  x @item.Quantity = @Convert.ToDecimal((item.Quantity * item.price)).ToString("#,##0")
-                        @{total += (item.Quantity * item.price);}
-                    </div><!-- /.box-body -->
-                            }
-                    <div class="box-body" style="display: block;">
+                                <h6>Price : ₹@string.Format("{0:#,0}", item.price)</h6>
+                                <h6>Category : @item.categoryName</h6>
+                                <h6>Quantity : </h6>
+                                <div class="center">
+                                    <p></p>
 
-                        Total Amount = <span id="totalAmount"></span>
+                                    <div class="input-group">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default btn-number" onclick="DecreaseProductAmount(@item.productId)">
+                                                <span class="glyphicon glyphicon-minus"></span>
+                                            </button>
+                                        </span>
+                                        <input type="text" class="form-control input-number" value="@item.Quantity" id="inputQuantitybox_@item.productId">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default btn-number" onclick="IncreaseProductAmount(@item.productId)">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                            </button>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-2 col-xs-2">
+                                <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onclick="RemoveFromCart(@item.productId)">Remove Item </a>  
+                            </div>
+                        </div>
+                    </div>
+                }
+                 </div>
+            </div>
+
+
+            <div class="col-md-3 col-lg-3">          
+                <div class="box box-warning">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Amount</h3>
+                        <div class="box-tools pull-right">
+                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+
+                        </div><!-- /.box-tools -->
+                    </div><!-- /.box-header -->
+                    @{ var total = 0;}
+                    @foreach (var itm in Model)
+                    {
+                    <div class="box-body" style="display: block;" id="cartAmountitembox_@itm.productId">
+
+                        @itm.productName  x <span id="ItemQuantity_@itm.productId"> @itm.Quantity</span> = ₹<span id="ItemPrice_@itm.productId"> @string.Format("{0:#,0}",itm.Quantity * itm.price)</span>
+                        @{total += (itm.Quantity * itm.price);}
                     </div><!-- /.box-body -->
+                    }
+                        <div class="box-body" style="display: block;">
+                    <hr />
+                            Total Amount = ₹<span id="totalAmount"></span>
+                        </div><!-- /.box-body -->
                 
 
-            </div><!-- /.box -->
-        </div>
-        <a href="/Home/PlaceOrder" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">Place Order </a>
-</div> 
-    }
+                </div><!-- /.box -->
+            </div>
+            <a href="/Home/PlaceOrder" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">Place Order </a>
+    </div>
+}
 
-    else
-    {
-    <h3> Your Cart is Empty </h3>
+else{<h3> Your Cart is Empty </h3>}
 
-    }
+    
+
+

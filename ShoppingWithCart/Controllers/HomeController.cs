@@ -64,18 +64,23 @@ namespace ShoppingWithCart.Controllers
                 dbObj.tblOrders.Add(order);
                 dbObj.SaveChanges();
 
-                var orderId = dbObj.tblOrders.OrderByDescending(m => m.orderId).First().orderId;
+                var orderId = order.orderId;
+
+               // var orderId = dbObj.tblOrders.OrderByDescending(m => m.orderId).First().orderId;
 
                 foreach (var item in pDetails)
                 {
-                    tblOrderProduct tblOrderProduct = new tblOrderProduct()
+                    if (item.Quantity > 0)
                     {
-                        orderId = orderId,
-                        productId = item.productId
-                    };
-                    dbObj.tblOrderProducts.Add(tblOrderProduct);
-                    dbObj.SaveChanges();
+                        tblOrderProduct tblOrderProduct = new tblOrderProduct()
+                        {
+                            orderId = orderId,
+                            productId = item.productId
+                        };
+                        dbObj.tblOrderProducts.Add(tblOrderProduct);
+                    }
                 }
+                dbObj.SaveChanges();
                 return Json(new { msg = "success" });
 
             }
@@ -87,7 +92,7 @@ namespace ShoppingWithCart.Controllers
         {
             List<Cart> ProductIds = new List<Cart>();
             bool productAlreadyExists = false;
-
+            int currentItemCount = 1;
             if ( Session["Cart"] == null)
             {
                 Cart items = new Cart()
@@ -109,6 +114,7 @@ namespace ShoppingWithCart.Controllers
                         if(product.Productid == id)
                         {
                             product.Quantity++;
+                            currentItemCount = product.Quantity;
                         }
                     }
                     
@@ -126,7 +132,7 @@ namespace ShoppingWithCart.Controllers
                 }
                 
             }
-            return Json(new {cartItemsCount = ProductIds.Count, cartItems = ProductIds, productStatus = productAlreadyExists },JsonRequestBehavior.AllowGet);
+            return Json(new {cartItemsCount = ProductIds.Count, cartItems = ProductIds, productStatus = productAlreadyExists, currentItemCount },JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -161,41 +167,52 @@ namespace ShoppingWithCart.Controllers
             {
                 using (Entities dbObj = new Entities())
                 {
+                    
                     var ProductIds = (List<Cart>)Session["Cart"];
+                    var lstId = ProductIds.Select(c => c.Productid).ToList();
+                    ProductDetailsVM detailsVM = new ProductDetailsVM();
 
-                    var queryResult = from prod in dbObj.tblProducts
-                                      join prodDtl in dbObj.tblProductDtls on prod.productId equals prodDtl.productId
-                                      join ctg in dbObj.tblCategories on prod.categoryId equals ctg.categoryId
-                                      where (prod.productId == prodDtl.productId) && (prod.categoryId == ctg.categoryId)
-                                      select new { prod.productId, prod.categoryId, ctg.categoryName, prodDtl.productName, prodDtl.description, prodDtl.imagePath, prodDtl.price };
-                    var results = queryResult.ToList();
+                    var queryResult = (from prod in dbObj.tblProducts
+                                       join prodDtl in dbObj.tblProductDtls on prod.productId equals prodDtl.productId
+                                       join ctg in dbObj.tblCategories on prod.categoryId equals ctg.categoryId
+                                       
+                                       where lstId.Contains(prod.productId)
+                                       select new ProductDetailsVM
+                                       {
+                                           productId = prod.productId,
+                                           categoryId = prod.categoryId,
+                                           categoryName = ctg.categoryName,
+                                           productName = prodDtl.productName,
+                                           description = prodDtl.description,
+                                           imagePath = prodDtl.imagePath,
+                                           price = prodDtl.price                                           
+                                       }).ToList();
 
-                    List<ProductDetailsVM> listproductDetailsVM = new List<ProductDetailsVM>();
-                    foreach (var item in ProductIds)
-                    {
-                        var row = results.Where(c => c.productId == item.Productid);
-                        foreach (var values in row)
-                        {
-                            ProductDetailsVM productDetails = new ProductDetailsVM()
-                            {
-                                productId = values.productId,
-                                categoryId = values.categoryId,
-                                categoryName = values.categoryName,
-                                productName = values.productName,
-                                description = values.description,
-                                imagePath = values.imagePath,
-                                price = values.price,
-                                Quantity = item.Quantity
-                            };
+                    var result = (from qr in queryResult
+                                  join pId in ProductIds on qr.productId equals pId.Productid
+                                  into rd
+                                  from r in rd.DefaultIfEmpty()
+                                  select new ProductDetailsVM
+                                  {
+                                      productId = qr.productId,
+                                      categoryId = qr.categoryId,
+                                      categoryName = qr.categoryName,
+                                      productName = qr.productName,
+                                      description = qr.description,
+                                      imagePath = qr.imagePath,
+                                      price = qr.price,
+                                      Quantity = r.Quantity//r.Quantity
+                                  }).ToList();
 
-                            listproductDetailsVM.Add(productDetails);
 
-                        }
-                    }
-
-                    return listproductDetailsVM;
+                    //foreach (var item in ProductIds)
+                    //{
+                    //    var row = queryResult.Where(c => c.productId == item.Productid).FirstOrDefault();
+                    //    row.Quantity = item.Quantity;
+                    //}
+                    return result;
                 }
-            
+                
             }
             else
             {
@@ -210,8 +227,8 @@ namespace ShoppingWithCart.Controllers
             return Json(new { msg = "Delete Cart Success" });
         }
 
-        [HttpGet]
-        public JsonResult UpdateTotalAmount()
+        [HttpPost]
+        public JsonResult UpdateTotalCart(Nullable<int> id)
         {
             var data = GetProductDetailsbyProductids();
             int amount = 0; 
@@ -219,7 +236,53 @@ namespace ShoppingWithCart.Controllers
             {                
                 amount += item.price * item.Quantity;
             }
-            return Json(new { amount },JsonRequestBehavior.AllowGet);
+            if (id != null)
+            {
+                var result = data.Where(z => z.productId == id).FirstOrDefault();
+                if (result != null)
+                {
+                    return Json(new { amount, itemQuantity = result.Quantity, itemTotalPrice = result.price * result.Quantity });
+                }
+            }
+            return Json(new { amount });
+        }
+
+        [HttpPost]
+        public JsonResult DecreaseProductAmount(int id)
+        {
+            List<Cart> ProductIds = new List<Cart>();
+
+            int currentItemCount = 1;
+            if (Session["Cart"] == null)
+            {
+            }
+            else
+            {
+                ProductIds = (List<Cart>)Session["Cart"];
+                if (ProductIds.Any(x => x.Productid == id))
+                {
+                    foreach (var product in ProductIds)
+                    {
+                        if (product.Productid == id)
+                        {
+                            if (product.Quantity > 1)
+                            {
+                                product.Quantity--;
+                                currentItemCount = product.Quantity;
+                            }
+                            
+                            else if(product.Quantity == 1)
+                            {
+                                product.Quantity--;
+                                currentItemCount = product.Quantity;
+                                RemoveFromCart(id);
+                            }
+                        }
+                    }
+                }
+            }
+            ProductIds = (List<Cart>)Session["Cart"];
+            return Json(new { currentItemCount, cartItemsCount = ProductIds.Count() });
         }
     }
 }
