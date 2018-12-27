@@ -19,7 +19,13 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <script src="~/dist/js/app.js"></script>
 
-    <script src="~/dist/js/MyJavaScript.js"></script>
+
+    @*document.write("<script type='text/javascript' src='~/dist/js/MyJavaScript.js?v="+Date.now()+"'></script>");*@
+    <script>
+        document.write("<script type='text/javascript' src='/dist/js/MyJavaScript.js?v="+ Date.now()+"'><\/script>");
+    </script>
+
+
 
     <style>
         .mdl-mega-footer {

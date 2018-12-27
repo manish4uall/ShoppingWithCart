@@ -287,41 +287,25 @@ namespace ShoppingWithCart.Controllers
 
         
         [HttpPost]
-        public JsonResult SetProductAmount(int id, int value)
+        public JsonResult SetProductQuantity(int id, int value)
         {
             List<Cart> ProductIds = new List<Cart>();
 
-            int currentItemCount = 1;
-            if (Session["Cart"] == null)
+            //int currentItemCount = 1;
+            if (Session["Cart"] != null)
             {
+                ProductIds = (List<Cart>)Session["Cart"];
+                var row = ProductIds.Where(x => x.Productid == id).FirstOrDefault();
+                row.Quantity = value;
+                Session["Cart"] = ProductIds;
             }
             else
             {
-                ProductIds = (List<Cart>)Session["Cart"];
-                if (ProductIds.Any(x => x.Productid == id))
-                {
-                    foreach (var product in ProductIds)
-                    {
-                        if (product.Productid == id)
-                        {
-                            if (product.Quantity > 1)
-                            {
-                                product.Quantity--;
-                                currentItemCount = product.Quantity;
-                            }
-
-                            else if (product.Quantity == 1)
-                            {
-                                product.Quantity--;
-                                currentItemCount = product.Quantity;
-                                RemoveFromCart(id);
-                            }
-                        }
-                    }
-                }
+                
+               
             }
             ProductIds = (List<Cart>)Session["Cart"];
-            return Json(new { currentItemCount, cartItemsCount = ProductIds.Count() });
+            return Json(new { currentItemCount = value, cartItemsCount = ProductIds.Count() });
         }
     }
 }

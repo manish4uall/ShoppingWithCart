@@ -37,6 +37,11 @@
                     </div>
                 @foreach (var item in Model)
                 {
+                    <script>
+                        $(document).ready(function () {
+                            load(@item.productId, @item.Quantity);
+                        });
+                    </script>
                     <div id="cartitembox_@item.productId" class="box-body cartitembox">
                         <div class="row">
                             <div class="col-md-2 col-sm-3 col-xs-3">
@@ -53,13 +58,13 @@
 
                                     <div class="input-group">
                                         <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[1]" id-field="@item.productId">
+                                            <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[@item.productId]">
                                                 <span class="glyphicon glyphicon-minus"></span>
                                             </button>
                                         </span>
-                                        <input type="text" name="quant[1]" class="form-control input-number" value="@item.Quantity" min="1" max="10">
+                                        <input type="text" name="quant[@item.productId]" class="form-control input-number" value="@item.Quantity" min="1" max="10" id-field="@item.productId">
                                         <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]">
+                                            <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[@item.productId]">
                                             
                                                 <span class="glyphicon glyphicon-plus"></span>
                                             </button>
@@ -132,8 +137,6 @@ else{<h3> Your Cart is Empty </h3>}
         e.preventDefault();
 
         fieldName = $(this).attr('data-field');
-        productId = $(this).attr('id-field');
-        console.log("Inside plus and minus product id = ", productId);
         type = $(this).attr('data-type');
         var input = $("input[name='" + fieldName + "']");
         var currentVal = parseInt(input.val());
@@ -169,9 +172,11 @@ else{<h3> Your Cart is Empty </h3>}
         minValue = parseInt($(this).attr('min'));
         maxValue = parseInt($(this).attr('max'));
         valueCurrent = parseInt($(this).val());
+        productId = $(this).attr('id-field');
+        //console.log("Inside plus and minus  input number product id = ", productId);
         if (valueCurrent >= minValue && valueCurrent <= maxValue) {
-            console.log("Current Value", valueCurrent);
-            //SetProductAmount(productId, valueCurrent);
+            //console.log("Current Value", valueCurrent);
+            SetProductQuantity(productId, valueCurrent);
         }
         
 
@@ -209,6 +214,31 @@ else{<h3> Your Cart is Empty </h3>}
             e.preventDefault();
         }
     });
+
+    function load(id,quantity) {
+        console.log('called', id)
+        minValue = 1;
+        maxValue = 10;
+        valueCurrent = quantity;
+        productId = id;
+       
+        name ="quant[" + id + "]";
+        if (valueCurrent >= minValue) {
+            $(".btn-number[data-type='minus'][data-field='" + name + "']").removeAttr('disabled')
+            //console.log("Current Value", valueCurrent);
+        } else {
+            alert('Sorry, the minimum value was reached');
+            $(this).val($(this).data('oldValue'));
+            //console.log("Current Value", valueCurrent);
+        }
+        if (valueCurrent <= maxValue) {
+            $(".btn-number[data-type='plus'][data-field='" + name + "']").removeAttr('disabled')
+            //console.log("Current Value", valueCurrent);
+        } else {
+            alert('Sorry, the maximum value was reached');
+            $(this).val($(this).data('oldValue'));
+        }
+    }
 
 </script>
 

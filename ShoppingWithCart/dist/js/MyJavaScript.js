@@ -265,29 +265,29 @@ function UpdateTotalCart(id) {
 //}
 
 
-function SetProductAmount(id,value) {
+function SetProductQuantity(id,value) {
 
-    console.log("SetProductAmount ProductId =", id);
+    console.log("SetProductQuantity ProductId =", id," Quantity =",value);
     var obj = {
         id: id,
         value: value
         };
     $.ajax({
-        url: "/Home/SetProductAmount",
+        url: "/Home/SetProductQuantity",
         data: JSON.stringify(obj),
         type: "POST",
         dataType: "json",
         contentType: "application/json",
         success: function (data) {
-            console.log("SetProductAmount success =", data);
+            console.log("SetProductQuantity success =", data);
             UpdateTotalCart(id);
             //NotifyByParameter("Quantity =" + data.currentItemCount);
-            console.log("SetProductAmount currentItemCount =", data.currentItemCount);
-            console.log("SetProductAmount cartItemsCount =", data.cartItemsCount);
+            console.log("SetProductQuantity currentItemCount =", data.currentItemCount);
+            console.log("SetProductQuantity cartItemsCount =", data.cartItemsCount);
             
         },
         error: function (data) {
-            console.log("SetProductAmount error =", data);
+            console.log("SetProductQuantity error =", data);
         }
     });
 }
